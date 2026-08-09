@@ -1,5 +1,12 @@
-# ⚙️ shesha-system
+# shesha-system
 
+**system control MCP** — Power profiles, GPU/MUX status, backup, maintenance.
+
+- Layer: Soma (Soma)
+- License: GPL-3.0
+- Part of: [Shesha ecosystem](https://github.com/gaganjainse/shesha-ecosystem)
+
+---
 **Shesha Soma — system control MCP server.** Power profiles, GPU/MUX status, battery/RAM/CPU
 telemetry, and backup triggers, exposed over stdio MCP for the agent.
 
