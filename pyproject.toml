@@ -1,7 +1,7 @@
 [project]
-name = "sesha-system"
+name = "shesha-system"
 version = "0.1.0"
-description = "Sesha Soma: power, GPU/MUX, backup and system status MCP server"
+description = "Shesha Soma: power, GPU/MUX, backup and system status MCP server"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "GPL-3.0-or-later" }
@@ -12,7 +12,7 @@ dependencies = ["mcp[cli]>=1.0", "fastmcp>=0.1"]
 dev = ["pytest>=8.0", "ruff>=0.6"]
 
 [project.scripts]
-sesha-system-mcp = "sesha_system.server:main"
+shesha-system-mcp = "shesha_system.server:main"
 
 [tool.uv]
 environments = ["sys_platform == 'linux'"]
