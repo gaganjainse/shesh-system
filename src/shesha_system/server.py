@@ -17,7 +17,12 @@ from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
-mcp = FastMCP("shesha-system")
+try:
+    from shesha_audit.mcp_guard import GuardedMCP as _MCP
+except ImportError:
+    _MCP = FastMCP
+
+mcp = _MCP("shesha-system")
 
 # Canonical power profile map.
 POWER_PROFILES = {
