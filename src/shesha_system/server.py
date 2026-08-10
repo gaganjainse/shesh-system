@@ -17,6 +17,8 @@ from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
+from .maintenance import check_updates, clean_caches, health_report
+
 try:
     from shesha_audit.mcp_guard import GuardedMCP as _MCP
 except ImportError:
@@ -161,6 +163,26 @@ def mux_status() -> str:
     if not shutil.which("msi-mux-switcher"):
         return "msi-mux-switcher not installed"
     return _run(["sudo", "-n", "msi-mux-switcher", "status"])
+
+
+
+@mcp.tool()
+def check_system_updates() -> dict:
+    """Check for pending pacman/AUR updates (read-only; never auto-updates)."""
+    s = check_updates()
+    return {"available": s.available, "count": s.count, "details": s.details, "note": s.note}
+
+
+@mcp.tool()
+def clean_system_caches(which: str = "user") -> str:
+    """Clean caches: which=user|pacman|journal|all (pacman/journal need sudo)."""
+    return clean_caches(which)
+
+
+@mcp.tool()
+def system_health() -> dict:
+    """Report disk, failed units, load, temperature, and cache sizes."""
+    return health_report()
 
 
 def main() -> None:
