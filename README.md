@@ -26,3 +26,8 @@ uv run shesh-system-mcp
 ```
 
 All hardware access is wrapped in `_run()` so tests mock subprocess and never touch the real GPU/battery.
+
+## Security
+
+Security posture and vulnerability reporting: [canonical ecosystem security
+policy](https://github.com/gaganjainse/shesh-ecosystem/blob/main/SECURITY.md).
