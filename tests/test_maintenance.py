@@ -56,3 +56,42 @@ def test_mcp_tools_exist():
     assert hasattr(srv, "check_system_updates")
     assert hasattr(srv, "clean_system_caches")
     assert hasattr(srv, "system_health")
+
+def test_check_system_updates_is_strictly_readonly(monkeypatch):
+    """Swarm #44: the update check may ONLY ever run read-only commands."""
+    import shesh_system.maintenance as m
+
+    called: list[list[str]] = []
+
+    def fake_run(cmd, timeout=60):
+        called.append(list(cmd))
+        return 0, "pkg1 1.0 -> 1.1\npkg2 2.0 -> 2.1\n"
+
+    monkeypatch.setattr(m, "_run", fake_run)
+    monkeypatch.setattr(m.shutil, "which", lambda name: "/usr/bin/checkupdates")
+    s = m.check_updates()
+    assert s.available and s.count == 2
+
+    monkeypatch.setattr(m.shutil, "which", lambda name: None)  # force pacman -Qu path
+    s = m.check_updates()
+    assert s.available
+
+    READONLY = {"checkupdates": {"-n"}, "pacman": {"-Qu"}, "du": {"-sm"}}
+    MUTATING = {"-S", "-Sy", "-Syu", "-Su", "-R", "-Rs", "-U", "--upgrade", "--refresh"}
+    for cmd in called:
+        assert cmd[0] in READONLY, f"unexpected command {cmd[0]} — updates check must be read-only"
+        for arg in cmd[1:]:
+            assert arg in READONLY[cmd[0]], f"forbidden arg {arg} to {cmd[0]}"
+            assert arg not in MUTATING
+
+
+def test_server_tool_reports_status(monkeypatch):
+    from shesh_system import server
+    from shesh_system.maintenance import UpdateStatus
+
+    monkeypatch.setattr(
+        server, "check_updates",
+        lambda: UpdateStatus(True, 3, "a b c", "ok"),
+    )
+    res = server.check_system_updates()
+    assert res["available"] is True and res["count"] == 3 and "note" in res
