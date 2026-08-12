@@ -112,7 +112,8 @@ def health_report() -> dict:
             t = int((zone / "temp").read_text()) // 1000
             if 20 < t < 110:
                 temps.append(t)
-        except Exception:
+        except (OSError, ValueError):
+            # sysfs entry vanished mid-read or held a non-numeric value.
             continue
     if temps:
         report["max_cpu_temp_c"] = max(temps)

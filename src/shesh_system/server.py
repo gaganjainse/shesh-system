@@ -95,8 +95,9 @@ def get_system_status() -> dict:
             "vram_used_mb": int(out[2]), "vram_total_mb": int(out[3]),
             "power_w": float(out[4]),
         }
-    except Exception:
-        status["gpu"] = {"error": "nvidia-smi unavailable"}
+    except (OSError, subprocess.SubprocessError, ValueError, IndexError) as exc:
+        # Missing binary, timeout, non-zero exit, or CSV we could not parse.
+        status["gpu"] = {"error": f"nvidia-smi unavailable: {exc}"}
 
     # CPU temperature: first thermal zone that reports a sane value.
     cpu_temp = -1
@@ -106,7 +107,8 @@ def get_system_status() -> dict:
             if 20 < t < 110:
                 cpu_temp = t
                 break
-        except Exception:
+        except (OSError, ValueError):
+            # Zone disappeared or held a non-numeric value — try the next one.
             continue
     status["cpu_temp_c"] = cpu_temp
 
@@ -122,18 +124,19 @@ def get_system_status() -> dict:
             "total_gb": round(total / 1_048_576, 1),
             "used_gb": round((total - avail) / 1_048_576, 1),
         }
-    except Exception:
-        pass
+    except (OSError, ValueError) as exc:
+        # /proc/meminfo unreadable or unparseable — surface it, never drop it silently.
+        status["ram"] = {"error": f"meminfo unavailable: {exc}"}
 
     # Battery / AC read defensively (files may be absent or unreadable).
-    with contextlib.suppress(Exception):
+    with contextlib.suppress(OSError, ValueError):
         bat = Path("/sys/class/power_supply/BAT0")
         if bat.exists():
             status["battery"] = {
                 "percent": int((bat / "capacity").read_text().strip()),
                 "state": (bat / "status").read_text().strip(),
             }
-    with contextlib.suppress(Exception):
+    with contextlib.suppress(OSError, ValueError):
         ac = Path("/sys/class/power_supply/AC")
         if ac.exists():
             status["ac_online"] = (ac / "online").read_text().strip() == "1"
