@@ -15,7 +15,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 from .maintenance import check_updates, clean_caches, health_report
 
