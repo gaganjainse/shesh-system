@@ -1,4 +1,4 @@
-"""Offline tests for shesha-system (subprocess calls mocked)."""
+"""Offline tests for shesh-system (subprocess calls mocked)."""
 from __future__ import annotations
 
 import sys
@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-import shesha_system.server as srv  # noqa: E402
+import shesh_system.server as srv  # noqa: E402
 
 
 @pytest.fixture(autouse=True)

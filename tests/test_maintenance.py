@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from shesha_system import maintenance as m  # noqa: E402
+from shesh_system import maintenance as m  # noqa: E402
 
 
 def test_check_updates_no_updates(monkeypatch):
@@ -51,7 +51,7 @@ def test_health_report_has_sections(monkeypatch, tmp_path):
 
 
 def test_mcp_tools_exist():
-    import shesha_system.server as srv  # noqa: F401
+    import shesh_system.server as srv  # noqa: F401
     # The tools are registered on the MCP instance; ensure functions exist.
     assert hasattr(srv, "check_system_updates")
     assert hasattr(srv, "clean_system_caches")

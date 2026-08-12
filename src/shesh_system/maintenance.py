@@ -1,4 +1,4 @@
-"""System maintenance, updates, and health checks for shesha-system.
+"""System maintenance, updates, and health checks for shesh-system.
 
 These are read-only or explicitly-opt-in maintenance operations. They never
 auto-update the system (the user controls `-Syu`); they report what is pending
