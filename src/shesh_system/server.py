@@ -15,14 +15,9 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from fastmcp import FastMCP
+from shesh_audit.mcp_guard import GuardedMCP as _MCP
 
 from .maintenance import check_updates, clean_caches, health_report
-
-try:
-    from shesh_audit.mcp_guard import GuardedMCP as _MCP
-except ImportError:
-    _MCP = FastMCP
 
 mcp = _MCP("shesh-system")
 
