@@ -1,34 +1,35 @@
->  **Consolidated into [shesh-core](https://github.com/gaganjainse/shesh-core)** — this module now lives in the shesh-core monorepo (same package name, same console script). Archived 2026-08-13.
-
 # shesh-system
 
-**system control MCP** — Power profiles, GPU/MUX status, backup, maintenance.
+> **Superseded by [shesh-core](https://github.com/gaganjainse/shesh-core).**
+> This repository is a tombstone: its history is preserved, its source is not.
 
-- Layer: Soma (Soma)
-- License: GPL-3.0
-- Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
+## What happened
 
----
-**Shesh Soma — system control MCP server.** Power profiles, GPU/MUX status, battery/RAM/CPU
-telemetry, and backup triggers, exposed over stdio MCP for the agent.
+[ADR-0019](https://github.com/gaganjainse/shesh-docs/blob/main/src/governance/adr/0019-shesh-core-monorepo.md)
+consolidated the single-module services into one repository. A module of a few
+hundred lines is not a service: each one carried its own build configuration,
+pipeline, and security policy, and those drifted apart from each other.
 
-- License: GPL-3.0
-- Layer: Soma
-- Provides: `mcp:system`, `power`, `gpu-mux`, `backup`, `maintenance`
-- Target: MSI Sword 16 HX on CachyOS (but runs on any Linux with `powerprofilesctl`)
-- Part of: [Shesh ecosystem](https://github.com/gaganjainse/shesh-ecosystem)
+The code now lives in `shesh-core` as the `shesh_system` package, with
+the same import path and the same console script.
 
-## Develop
+## Why the source was removed
+
+Two copies of the same module drift. Keeping the code here meant a reader could
+find it, edit it, and have the change silently ignored by everything that
+actually runs.
+
+The history remains in this repository's git log. Nothing was lost.
+
+## Installing
 
 ```bash
-uv sync --extra dev
-uv run pytest -q
-uv run ruff check .
-uv run shesh-system-mcp
+pipx install git+https://github.com/gaganjainse/shesh-core.git
 ```
-All hardware access is wrapped in `_run()` so tests mock subprocess and never touch the real GPU/battery.
 
-## Security
+Console script names are unchanged, so existing client configuration keeps
+working.
 
-Security posture and vulnerability reporting: [canonical ecosystem security
-policy](https://github.com/gaganjainse/shesh-ecosystem/blob/main/SECURITY.md).
+## Licence
+
+GPL-3.0-or-later.
